@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YellGame", "YellGame\YellGame.csproj", "{6BD35602-7F34-4C20-8AD8-75D584CB4741}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6BD35602-7F34-4C20-8AD8-75D584CB4741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BD35602-7F34-4C20-8AD8-75D584CB4741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BD35602-7F34-4C20-8AD8-75D584CB4741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BD35602-7F34-4C20-8AD8-75D584CB4741}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D9A333D-092B-4250-BEB9-E6F0494DC017}
+	EndGlobalSection
+EndGlobal
