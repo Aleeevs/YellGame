@@ -72,8 +72,7 @@ namespace YellGame {
 
             if (moveAll && !sides.ContainsValue(ObstacleSide.LEFT)) {
                 foreach (var obstacle in obstacles) {
-                    if (!obstacle.Locked)
-                        obstacle.Picture.Left -= 2;
+                    obstacle.Picture.Left -= 2;
                 }
             }
 
