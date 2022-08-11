@@ -10,17 +10,39 @@ using System.Windows.Forms;
 
 namespace YellGame {
     public partial class Form1 : Form {
-        public Form1() {
-            InitializeComponent();
-        }
 
+        bool stop = false;
         bool up = false;
         bool left = false;
         bool right = false;
 
-        List<Obstacle> obstacles = new List<Obstacle>();
+        GameMap map;
+
+        public Form1() {
+            InitializeComponent();
+
+            map = new GameMap("Abracadabra")
+                .AddObstacle(Width - 300, 150)
+                .AddVoid(150)
+                .AddObstacle(120, 200)
+                .AddVoid(120)
+                .AddObstacle(120, 375)
+                .AddVoid(120)
+                .AddObstacle(120, 320)
+                .AddVoid(200)
+                .AddObstacle(120, 210)
+                .AddVoid(230)
+                .AddObstacle(120, 300)
+                .AddVoid(300)
+                .AddObstacle(120, 310)
+                .AddVoid(150);
+
+            map.SetEnd(255);
+        }
 
         private void timer_Tick(object sender, EventArgs e) {
+            if (stop) return;
+
             int movement = 2;
             int horizontal = 0;
             int vertical = 0;
@@ -28,7 +50,7 @@ namespace YellGame {
 
             if (this.right && player.Right < 780) {
                 horizontal = movement;
-                moveAll = player.Right >= Width * 7 / 10;
+                moveAll = player.Right >= Width * 7 / 10 && map.GetLastObstacle().Right != Width;
             } else if (this.left && player.Left > 0) {
                 horizontal = -movement;
             }
@@ -43,25 +65,33 @@ namespace YellGame {
             int bottom = player.Bottom;
             int left = player.Left;
             int right = player.Right;
+            Rectangle playerRect = new Rectangle(player.Location, player.Size);
 
             Dictionary<Obstacle, ObstacleSide> sides = new Dictionary<Obstacle, ObstacleSide>();
-            foreach (var obstacle in obstacles) {
-                if (IsBetween(bottom, obstacle.Top, obstacle.Top + vertical) && (IsBetween(left, obstacle.Left, obstacle.Right) || IsBetween(right, obstacle.Left, obstacle.Right))) {
+            foreach (var obstacle in map.Obstacles) {
+                if (!up && playerRect.IntersectsWith(new Rectangle(obstacle.Left, obstacle.Top - 1, obstacle.Width, vertical))) {
                     vertical = obstacle.Top - bottom;
                     sides.Add(obstacle, ObstacleSide.TOP);
                 }
-                else if (IsBetween(top, obstacle.Bottom + vertical, obstacle.Bottom) && (IsBetween(left, obstacle.Left, obstacle.Right) || IsBetween(right, obstacle.Left, obstacle.Right))) {
+                else if (up && playerRect.IntersectsWith(new Rectangle(obstacle.Left, obstacle.Bottom + vertical + 1, obstacle.Width, -vertical))) {
                     vertical = obstacle.Bottom - top;
                     sides.Add(obstacle, ObstacleSide.BOTTOM);
                 }
-                else if (IsBetween(right, obstacle.Left, obstacle.Left + horizontal) && (IsBetween(top, obstacle.Top, obstacle.Bottom) || IsBetween(bottom, obstacle.Top, obstacle.Bottom) || IsBetween(obstacle.Top, top, bottom) || IsBetween(obstacle.Bottom, top, bottom))) {
+                else if (this.right && playerRect.IntersectsWith(new Rectangle(obstacle.Left - 1, obstacle.Top, horizontal, obstacle.Height))) {
                     horizontal = obstacle.Left - right;
                     sides.Add(obstacle, ObstacleSide.LEFT);
                 }
-                else if (IsBetween(left, obstacle.Right + horizontal, obstacle.Right) && (IsBetween(top, obstacle.Top, obstacle.Bottom) || IsBetween(bottom, obstacle.Top, obstacle.Bottom) || IsBetween(obstacle.Top, top, bottom) || IsBetween(obstacle.Bottom, top, bottom))) {
+                else if (this.left && playerRect.IntersectsWith(new Rectangle(obstacle.Right + horizontal + 1, obstacle.Top, -horizontal, obstacle.Height))) {
                     horizontal = obstacle.Right - left;
                     sides.Add(obstacle, ObstacleSide.RIGHT);
                 }
+            }
+
+            bool win = sides.GetValueOrDefault(map.GetLastObstacle(), ObstacleSide.NONE) == ObstacleSide.TOP;
+            if (win) {
+                stop = true;
+                this.winLabel.Visible = true;
+                return;
             }
 
             if (moveAll)
@@ -71,9 +101,7 @@ namespace YellGame {
             player.Top += vertical;
 
             if (moveAll && !sides.ContainsValue(ObstacleSide.LEFT)) {
-                foreach (var obstacle in obstacles) {
-                    obstacle.Picture.Left -= 2;
-                }
+                map.MoveAll();
             }
 
             StringBuilder sb = new StringBuilder();
@@ -81,10 +109,11 @@ namespace YellGame {
                 sb.Append(side.Value).Append(' ');
 
             Text = sb.ToString() + player.Left + ", " + player.Top + " | " + horizontal + ", " + vertical;
-        }
 
-        private bool IsBetween(int n, int a, int b) {
-            return n >= a && n <= b;
+            if (player.Bottom >= 510) {
+                stop = true;
+                loseLabel.Visible = true;
+            }
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e) {
@@ -116,13 +145,7 @@ namespace YellGame {
         }
 
         private void Form1_Load(object sender, EventArgs e) {
-            obstacles.Add(new Obstacle(100, 100, 100, 100));
-            obstacles.Add(new Obstacle(200, 100, 47, 31));
-            obstacles.Add(new Obstacle(0, Height - 150, Width - 300, 150));
-            obstacles.Add(new Obstacle(0, Height - 150, 75, 150));
-            obstacles.Add(new Obstacle(Width - 200, Height - 300, 90, 300));
-
-            foreach (var ob in obstacles)
+            foreach (var ob in map.Obstacles)
                 Controls.Add(ob.Picture);
         }
     }

@@ -25,6 +25,7 @@ namespace YellGame {
             };
         }
 
+
         public PictureBox Picture { get; set; }
         public bool Locked { get; set; }
         public int Left { get => Picture.Left; }
@@ -34,44 +35,13 @@ namespace YellGame {
         public int Width { get => Picture.Width; }
         public int Height { get => Picture.Height; }
 
-        /*
-        public bool HasIn(PictureBox other) {
-            return HasIn(other.Left, other.Right, other.Top, other.Bottom);
-        }
-
-        public bool HasIn(int left, int top) {
-            return left > Left && left < Right &&
-                top > Top && top < Bottom;
-        }
-        */
-
-        public bool HasIn(int x, int y, int width, int height) {
-            return new Rectangle(x, y, width, height).IntersectsWith(new Rectangle(Picture.Location, Picture.Size));
-        }
-
-        public bool HasOn(int x, int y, int width) {
-            return new Rectangle(x, y, width, 1).IntersectsWith(new Rectangle(Left, Top, Width, 1));
-        }
-
-        public ObstacleSide? IntersectOn(int x, int y, int width, int height, int m) {
-            if (new Rectangle(x, y + height, width, m).IntersectsWith(new Rectangle(Left, Top, Width, m)))
-                return ObstacleSide.TOP;
-            if (new Rectangle(x, y, width, m + 1).IntersectsWith(new Rectangle(Left, Bottom, Width, m + 1)))
-                return ObstacleSide.BOTTOM;
-            if (new Rectangle(x + width, y, m, height).IntersectsWith(new Rectangle(Left, Top, m, Height)))
-                return ObstacleSide.LEFT;
-            if (new Rectangle(x, y, m, height).IntersectsWith(new Rectangle(Right, Top, m, Height)))
-                return ObstacleSide.RIGHT;
-
-            return null;
-        }
-
     }
 
     enum ObstacleSide {
         TOP,
         RIGHT,
         BOTTOM,
-        LEFT
+        LEFT,
+        NONE
     }
 }
