@@ -7,18 +7,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
+using System.Runtime.InteropServices;
 
 namespace YellGame {
-    public partial class Form1 : Form {
+    public partial class GameForm : Form {
 
         bool stop = false;
-        bool up = false;
-        bool left = false;
-        bool right = false;
+        int up = 0;
+        int right = 0;
 
         GameMap map;
+        WaveInEvent waveIn;
 
-        public Form1() {
+        public GameForm() {
             InitializeComponent();
 
             map = new GameMap("Abracadabra")
@@ -43,51 +46,51 @@ namespace YellGame {
         private void timer_Tick(object sender, EventArgs e) {
             if (stop) return;
 
-            int movement = 2;
+            waveIn.DeviceNumber = Settings.Device;
+
             int horizontal = 0;
             int vertical = 0;
             bool moveAll = false;
 
-            if (this.right && player.Right < 780) {
-                horizontal = movement;
+            if (this.right != 0 && player.Right < 780) {
+                horizontal = this.right;
                 moveAll = player.Right >= Width * 7 / 10 && map.GetLastObstacle().Right != Width;
-            } else if (this.left && player.Left > 0) {
-                horizontal = -movement;
             }
             
-            if (up && player.Top > 0) {
-                vertical = -movement;
+            if (this.up != 0 && player.Top > 0) {
+                vertical = -this.up;
             } else if (player.Top < 452) {
-                vertical = movement * 3 / 2;
+                vertical = 4;
             }
 
             int top = player.Top;
             int bottom = player.Bottom;
-            int left = player.Left;
             int right = player.Right;
             Rectangle playerRect = new Rectangle(player.Location, player.Size);
 
-            Dictionary<Obstacle, ObstacleSide> sides = new Dictionary<Obstacle, ObstacleSide>();
+            bool win = false;
+            bool dead = false;
             foreach (var obstacle in map.Obstacles) {
-                if (!up && playerRect.IntersectsWith(new Rectangle(obstacle.Left, obstacle.Top - 1, obstacle.Width, vertical))) {
+                if (up == 0 && playerRect.IntersectsWith(new Rectangle(obstacle.Left, obstacle.Top - 1, obstacle.Width, vertical))) {
                     vertical = obstacle.Top - bottom;
-                    sides.Add(obstacle, ObstacleSide.TOP);
+                    if (obstacle.Deadly) 
+                        dead = true;
+                    if (map.GetLastObstacle().Equals(obstacle))
+                        win = true;
                 }
-                else if (up && playerRect.IntersectsWith(new Rectangle(obstacle.Left, obstacle.Bottom + vertical + 1, obstacle.Width, -vertical))) {
+                else if (up != 0 && playerRect.IntersectsWith(new Rectangle(obstacle.Left, obstacle.Bottom + vertical + 1, obstacle.Width, -vertical))) {
                     vertical = obstacle.Bottom - top;
-                    sides.Add(obstacle, ObstacleSide.BOTTOM);
+                    if (obstacle.Deadly)
+                        dead = true;
                 }
-                else if (this.right && playerRect.IntersectsWith(new Rectangle(obstacle.Left - 1, obstacle.Top, horizontal, obstacle.Height))) {
+                else if (this.right != 0 && playerRect.IntersectsWith(new Rectangle(obstacle.Left - 1, obstacle.Top, horizontal, obstacle.Height))) {
                     horizontal = obstacle.Left - right;
-                    sides.Add(obstacle, ObstacleSide.LEFT);
-                }
-                else if (this.left && playerRect.IntersectsWith(new Rectangle(obstacle.Right + horizontal + 1, obstacle.Top, -horizontal, obstacle.Height))) {
-                    horizontal = obstacle.Right - left;
-                    sides.Add(obstacle, ObstacleSide.RIGHT);
+                    moveAll = false;
+                    if (obstacle.Deadly)
+                        dead = true;
                 }
             }
 
-            bool win = sides.GetValueOrDefault(map.GetLastObstacle(), ObstacleSide.NONE) == ObstacleSide.TOP;
             if (win) {
                 stop = true;
                 this.winLabel.Visible = true;
@@ -100,53 +103,44 @@ namespace YellGame {
             player.Left += horizontal;
             player.Top += vertical;
 
-            if (moveAll && !sides.ContainsValue(ObstacleSide.LEFT)) {
+            if (moveAll) {
                 map.MoveAll();
             }
 
-            StringBuilder sb = new StringBuilder();
-            foreach (var side in sides)
-                sb.Append(side.Value).Append(' ');
-
-            Text = sb.ToString() + player.Left + ", " + player.Top + " | " + horizontal + ", " + vertical;
-
-            if (player.Bottom >= 510) {
+            if (player.Bottom >= 510 || dead) {
                 stop = true;
                 loseLabel.Visible = true;
-            }
-        }
-
-        private void Form1_KeyDown(object sender, KeyEventArgs e) {
-            switch (e.KeyCode) {
-                case Keys.Up:
-                    up = true;
-                    break;
-                case Keys.Right:
-                    right = true;
-                    break;
-                case Keys.Left:
-                    left = true;
-                    break;
-            }
-        }
-
-        private void Form1_KeyUp(object sender, KeyEventArgs e) {
-            switch (e.KeyCode) {
-                case Keys.Up:
-                    up = false;
-                    break;
-                case Keys.Right:
-                    right = false;
-                    break;
-                case Keys.Left:
-                    left = false;
-                    break;
             }
         }
 
         private void Form1_Load(object sender, EventArgs e) {
             foreach (var ob in map.Obstacles)
                 Controls.Add(ob.Picture);
+
+            waveIn = new WaveInEvent();
+            waveIn.DataAvailable += ShowPeakMono;
+            waveIn.StartRecording();
+        }
+
+        private void ShowPeakMono(object sender, WaveInEventArgs args) {
+            float maxValue = 32767;
+            int peakValue = 0;
+            int bytesPerSample = 2;
+            for (int index = 0; index < args.BytesRecorded; index += bytesPerSample) {
+                int value = BitConverter.ToInt16(args.Buffer, index);
+                peakValue = Math.Max(peakValue, value);
+            }
+
+            maxValue += (int) (Settings.Sensibility / 100 * maxValue);
+            float volume = (100 * peakValue) / maxValue;
+
+            up = (int) volume * 11 / 100;
+            right = (int) volume * 13 / 100;
+        }
+
+        private void settingsButton_Click(object sender, EventArgs e) {
+            stop = true;
+            Settings.OpenAndExecuteOnClose((s, e) => stop = false);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace YellGame {
 
 
         public PictureBox Picture { get; set; }
-        public bool Locked { get; set; }
+        public bool Deadly { get; set; }
         public int Left { get => Picture.Left; }
         public int Top { get => Picture.Top; }
         public int Right { get => Picture.Right; }
@@ -35,13 +35,5 @@ namespace YellGame {
         public int Width { get => Picture.Width; }
         public int Height { get => Picture.Height; }
 
-    }
-
-    enum ObstacleSide {
-        TOP,
-        RIGHT,
-        BOTTOM,
-        LEFT,
-        NONE
     }
 }

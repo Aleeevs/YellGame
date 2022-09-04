@@ -1,6 +1,6 @@
 ﻿
 namespace YellGame {
-    partial class Form1 {
+    partial class GameForm {
         /// <summary>
         ///  Required designer variable.
         /// </summary>
@@ -25,11 +25,13 @@ namespace YellGame {
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameForm));
             this.player = new System.Windows.Forms.PictureBox();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.loseLabel = new System.Windows.Forms.Label();
             this.winLabel = new System.Windows.Forms.Label();
+            this.volume = new System.Windows.Forms.Label();
+            this.settingsButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.player)).BeginInit();
             this.SuspendLayout();
             // 
@@ -77,24 +79,43 @@ namespace YellGame {
             this.winLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.winLabel.Visible = false;
             // 
-            // Form1
+            // volume
+            // 
+            this.volume.AutoSize = true;
+            this.volume.Location = new System.Drawing.Point(183, 7);
+            this.volume.Name = "volume";
+            this.volume.Size = new System.Drawing.Size(0, 20);
+            this.volume.TabIndex = 3;
+            // 
+            // settingsButton
+            // 
+            this.settingsButton.BackgroundImage = global::YellGame.Properties.Resources.settings;
+            this.settingsButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.settingsButton.Location = new System.Drawing.Point(12, 446);
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(45, 45);
+            this.settingsButton.TabIndex = 4;
+            this.settingsButton.UseVisualStyleBackColor = true;
+            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
+            // 
+            // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(832, 503);
+            this.Controls.Add(this.settingsButton);
+            this.Controls.Add(this.volume);
             this.Controls.Add(this.winLabel);
             this.Controls.Add(this.loseLabel);
             this.Controls.Add(this.player);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "GameForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.player)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -107,6 +128,8 @@ namespace YellGame {
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Label loseLabel;
         private System.Windows.Forms.Label winLabel;
+        private System.Windows.Forms.Label volume;
+        private System.Windows.Forms.Button settingsButton;
     }
 }
 
