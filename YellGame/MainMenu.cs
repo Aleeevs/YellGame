@@ -39,7 +39,7 @@ namespace YellGame {
         }
 
         private void settingsButton_Click(object sender, EventArgs e) {
-            Settings.OpenAndExecuteOnCloseExecute((s, e) => { });
+            Settings.OpenAndExecuteOnClose((s, e) => { });
         }
     }
 }

@@ -32,7 +32,7 @@ namespace YellGame {
             if (WaveIn.DeviceCount == 0) {
                 stop = true;
                 MessageBox.Show("Nessun dispositivo di input audio trovato.");
-                Settings.OpenAndExecuteOnCloseExecute((s, e) => stop = false);
+                Settings.OpenAndExecuteOnClose((s, e) => stop = false);
                 return;
             }
 
@@ -149,7 +149,7 @@ namespace YellGame {
         private void settingsButton_Click(object sender, EventArgs e) {
             // Apro le impostazioni. Quando vengono chiuse, il gioco riprende
             stop = true;
-            Settings.OpenAndExecuteOnCloseExecute((s, e) => stop = false);
+            Settings.OpenAndExecuteOnClose((s, e) => stop = false);
         }
 
         private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
