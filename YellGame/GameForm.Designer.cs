@@ -115,7 +115,8 @@ namespace YellGame {
             this.Name = "GameForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.GameForm_FormClosed);
+            this.Load += new System.EventHandler(this.GameForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.player)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -15,7 +15,7 @@ namespace YellGame {
         public static double Sensibility;
         public static int Device;
 
-        public static void OpenAndExecuteOnClose(Action<object, EventArgs> action) {
+        public static void OpenAndExecuteOnCloseExecute(Action<object, EventArgs> action) {
             Settings settings = new Settings();
             settings.FormClosed += (s, e) => {
                 if (action != null)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace YellGame {
-    class Obstacle {
+    public class Obstacle {
 
         public Obstacle(PictureBox picture) {
             Picture = picture;

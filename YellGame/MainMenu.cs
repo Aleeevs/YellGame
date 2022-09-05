@@ -16,13 +16,30 @@ namespace YellGame {
         }
 
         private void playButton_Click(object sender, EventArgs e) {
-            GameForm app = new GameForm();
+            GameMap map = new GameMap("Abracadabra")
+                .AddObstacle(Width - 300, 150)
+                .AddVoid(150)
+                .AddObstacle(120, 200)
+                .AddVoid(120)
+                .AddObstacle(120, 375)
+                .AddVoid(120)
+                .AddObstacle(120, 320)
+                .AddVoid(200)
+                .AddObstacle(120, 210)
+                .AddVoid(230)
+                .AddObstacle(120, 300)
+                .AddVoid(300)
+                .AddObstacle(120, 310)
+                .AddVoid(150);
+            map.SetEnd(255);
+
+            GameForm app = new GameForm(map);
             app.Show();
             Hide();
         }
 
         private void settingsButton_Click(object sender, EventArgs e) {
-            Settings.OpenAndExecuteOnClose((s, e) => { });
+            Settings.OpenAndExecuteOnCloseExecute((s, e) => { });
         }
     }
 }

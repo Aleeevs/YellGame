@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace YellGame {
-    class GameMap {
+    public class GameMap {
 
         public string Name { get; }
         public List<Obstacle> Obstacles { get; } = new List<Obstacle>();
