@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 using NAudio.Wave;
+using YellGame.Properties;
 
 namespace YellGame {
     public partial class GameForm : Form {
@@ -52,7 +54,7 @@ namespace YellGame {
 
                 // Se il giocatore ha raggiunto i 7/10 dello schermo, allora tutti gli ostacoli dovranno scorrere
                 // Effetto super mario
-                moveAll = player.Right >= Width * 7 / 10 && map.GetLastObstacle().Right != Width;
+                moveAll = player.Right >= Width * 7 / 10 && map.GetLastObstacle().Right > Width;
             }
             
             // Aumenta/Diminuisce il movimento verticale
@@ -176,7 +178,7 @@ namespace YellGame {
 
         private void ExecuteWin() {
             stop = true;
-            CreateResultView("HAI VINTO!", Color.Green, true);
+            CreateResultView("HAI VINTO!", Color.LimeGreen, true);
         }
 
         private void ExecuteLose() {
@@ -187,10 +189,8 @@ namespace YellGame {
         private void CreateResultView(string text, Color color, bool showTime = false) {
             Label result = new Label {
                 AutoSize = true,
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = Color.WhiteSmoke,
                 Font = new Font("Impact", 72F, FontStyle.Regular, GraphicsUnit.Point),
-                Size = new Size(585, 150),
                 ForeColor = color,
                 Name = "resultLabel",
                 TabIndex = 1,
@@ -198,6 +198,7 @@ namespace YellGame {
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
+            Controls.Add(result);
             result.Location = new Point((Width - result.Width) / 2, Height / 2 - result.Height);
 
             Button retry = new Button() {
@@ -211,38 +212,68 @@ namespace YellGame {
             retry.Click += retryButton_Click;
 
             retry.Location = new Point(Width / 2 - retry.Width - 30, Height / 2 + 15);
+            Controls.Add(retry);
+
             logoutButton.Location = new Point(Width / 2 + 30, Height / 2 + 15);
 
-            TimeSpan time = DateTime.Now - startTime;
-            string timeText = "";
-            if (time.TotalSeconds >= 60)
-                timeText = time.Minutes + " min ";
-            if (time.Seconds % 60 != 0)
-                timeText += (time.Seconds - 60 * time.Minutes) + " sec";
-
-            Label timings = new Label {
-                AutoSize = true,
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
-                Font = new Font("Impact", 12F, FontStyle.Regular, GraphicsUnit.Point),
-                Size = new Size(10, 10),
-                ForeColor = Color.Black,
-                Name = "resultLabel",
-                TabIndex = 1,
-                Text = timeText,
-                TextAlign = ContentAlignment.MiddleCenter
+            PictureBox back = new PictureBox() {
+                BackColor = Color.WhiteSmoke,
+                Name = "back",
+                Size = new Size(result.Width, result.Height * 8 / 3),
+                TabStop = false
             };
 
-            Controls.Add(result);
-            Controls.Add(retry);
-            Controls.Add(timings);
+            Controls.Add(back);
+            back.Location = new Point((Width - back.Width) / 2, (Height - back.Height) / 2);
 
-            timings.Location = new Point((Width - timings.Width) / 2, Height / 2 - result.Height - timings.Height - 10);
+            Console.WriteLine(result.Width);
+            Console.WriteLine(back.Width + " " + back.Height);
+            Console.WriteLine(back.Location.X + " " + back.Location.Y);
 
+            GraphicsPath gp = new GraphicsPath();
+            Rectangle r = new Rectangle(new Point(0, 0), back.Size);
+            int d = 75;
+            gp.AddArc(r.X, r.Y, d, d, 180, 90);
+            gp.AddArc(r.X + r.Width - d, r.Y, d, d, 270, 90);
+            gp.AddArc(r.X + r.Width - d, r.Y + r.Height - d, d, d, 0, 90);
+            gp.AddArc(r.X, r.Y + r.Height - d, d, d, 90, 90);
+            back.Region = new Region(gp);
+
+            back.BringToFront();
             result.BringToFront();
             retry.BringToFront();
-            timings.BringToFront();
             logoutButton.BringToFront();
+
+            if (showTime) {
+                TimeSpan time = DateTime.Now - startTime;
+                string timeText = FormatTimeSpan(time); ;
+                if (time < map.TimeRecord) {
+                    timeText += "\nNUOVO RECORD!";
+                    map.TimeRecord = time;
+                } else {
+                    timeText += "\nRecord: " + FormatTimeSpan(map.TimeRecord);
+                }
+
+                Label timings = new Label {
+                    AutoSize = true,
+                    BackColor = Color.WhiteSmoke,
+                    Font = new Font("Impact", 12F, FontStyle.Regular, GraphicsUnit.Point),
+                    Size = new Size(10, 10),
+                    ForeColor = Color.Black,
+                    Name = "resultLabel",
+                    TabIndex = 1,
+                    Text = timeText,
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+                Controls.Add(timings);
+
+                timings.Location = new Point((Width - timings.Width) / 2, retry.Bottom + 15);
+                timings.BringToFront();
+            }
+        }
+
+        private string FormatTimeSpan(TimeSpan time) {
+            return time.Minutes + " min " + time.Seconds + " sec";
         }
 
     }

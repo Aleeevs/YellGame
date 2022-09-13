@@ -8,15 +8,20 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace YellGame {
-    public class GameMap {
+    public class GameMap : IEquatable<GameMap> {
 
-        public string Name { get; }
+        public string Name { get; set; }
+        public TimeSpan TimeRecord { get; set; }
         public List<Obstacle> Obstacles { get; } = new List<Obstacle>();
         private int X { get; set; }
         private int Moved { get; set; }
 
-        public GameMap(string name) {
+        public GameMap() {
+        }
+
+        public GameMap(string name, int startHeight) {
             Name = name;
+            AddObstacle(300, 100);
         }
 
         public GameMap AddVoid(int width) {
@@ -50,6 +55,7 @@ namespace YellGame {
         public void SetEnd(int height) {
             Obstacle obstacle = new Obstacle(X, 504 - height, 614, 29);
             obstacle.Picture.Image = Properties.Resources.finish;
+            obstacle.Picture.Tag = Data.ObstacleType.END;
 
             AddObstacle(614, height - obstacle.Height);
 
@@ -80,6 +86,26 @@ namespace YellGame {
             Moved = 0;
         }
 
+        public override bool Equals(object obj) {
+            return Equals(obj as GameMap);
+        }
+
+        public bool Equals(GameMap other) {
+            return other is not null &&
+                   Name == other.Name;
+        }
+
+        public override int GetHashCode() {
+            return HashCode.Combine(Name);
+        }
+
+        public static bool operator ==(GameMap left, GameMap right) {
+            return EqualityComparer<GameMap>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(GameMap left, GameMap right) {
+            return !(left == right);
+        }
     }
 
 }

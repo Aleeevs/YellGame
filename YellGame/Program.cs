@@ -14,6 +14,9 @@ namespace YellGame {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Data.LoadMaps("..\\..\\..\\maps");
+            Data.LoadTimeRecords();
             Application.Run(new MainMenu());
         }
     }

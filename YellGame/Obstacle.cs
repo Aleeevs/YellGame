@@ -21,7 +21,7 @@ namespace YellGame {
                 Size = new Size(width, height),
                 TabIndex = 1,
                 TabStop = false,
-                Tag = "obstacle"
+                Tag = Data.ObstacleType.OBSTACLE
             };
         }
 

@@ -77,6 +77,7 @@ namespace YellGame {
             this.logoutButton.Name = "logoutButton";
             this.logoutButton.Size = new System.Drawing.Size(45, 45);
             this.logoutButton.TabIndex = 5;
+            this.logoutButton.Text = "  ";
             this.logoutButton.UseVisualStyleBackColor = true;
             this.logoutButton.Click += new System.EventHandler(this.logoutButton_Click);
             // 
