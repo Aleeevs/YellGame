@@ -18,10 +18,10 @@ namespace YellGame {
         private void playButton_Click(object sender, EventArgs e) {
             GameMap map = new GameMap("Abracadabra")
                 .AddObstacle(Width - 300, 150)
-                .AddVoid(150)
+                .AddVoid(150)/*
                 .AddObstacle(120, 200)
                 .AddVoid(120)
-                .AddObstacle(120, 375)
+                .AddObstacle(120, 310)
                 .AddVoid(120)
                 .AddObstacle(120, 320)
                 .AddVoid(200)
@@ -29,6 +29,7 @@ namespace YellGame {
                 .AddVoid(230)
                 .AddObstacle(120, 300)
                 .AddVoid(300)
+                */
                 .AddObstacle(120, 310)
                 .AddVoid(150);
             map.SetEnd(255);
@@ -40,6 +41,10 @@ namespace YellGame {
 
         private void settingsButton_Click(object sender, EventArgs e) {
             Settings.OpenAndExecuteOnClose((s, e) => { });
+        }
+
+        private void MainMenu_FormClosed(object sender, FormClosedEventArgs e) {
+            Application.Exit();
         }
     }
 }

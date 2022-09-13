@@ -12,9 +12,6 @@ using NAudio.Wave;
 namespace YellGame {
     public partial class Settings : Form {
 
-        public static double Sensibility;
-        public static int Device;
-
         public static void OpenAndExecuteOnClose(Action<object, EventArgs> action) {
             Settings settings = new Settings();
             settings.FormClosed += (s, e) => {
@@ -28,8 +25,8 @@ namespace YellGame {
             InitializeComponent();
             ScanSoundCards();
 
-            this.cbDevice.SelectedIndex = Device;
-            this.sensibilityBar.Value = (int) (Sensibility * 2);
+            this.cbDevice.SelectedIndex = Data.Device;
+            this.sensibilityBar.Value = (int) (Data.Sensibility * 2);
         }
 
         private void ScanSoundCards() {
@@ -44,12 +41,12 @@ namespace YellGame {
         }
 
         private void sensibilityBar_Scroll(object sender, EventArgs e) {
-            Sensibility = sensibilityBar.Value / 2d;
-            Text = Sensibility + " ";
+            Data.Sensibility = sensibilityBar.Value / 2d;
+            Text = Data.Sensibility + " ";
         }
 
         private void cbDevice_SelectedIndexChanged(object sender, EventArgs e) {
-            Device = cbDevice.SelectedIndex;
+            Data.Device = cbDevice.SelectedIndex;
         }
     }
 }

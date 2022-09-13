@@ -40,7 +40,7 @@ namespace YellGame {
             // 
             // settingsButton
             // 
-            this.settingsButton.Location = new System.Drawing.Point(332, 210);
+            this.settingsButton.Location = new System.Drawing.Point(322, 223);
             this.settingsButton.Name = "settingsButton";
             this.settingsButton.Size = new System.Drawing.Size(113, 29);
             this.settingsButton.TabIndex = 1;
@@ -57,6 +57,7 @@ namespace YellGame {
             this.Controls.Add(this.playButton);
             this.Name = "MainMenu";
             this.Text = "MainMenu";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainMenu_FormClosed);
             this.ResumeLayout(false);
 
         }

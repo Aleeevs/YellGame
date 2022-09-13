@@ -13,6 +13,7 @@ namespace YellGame {
         public string Name { get; }
         public List<Obstacle> Obstacles { get; } = new List<Obstacle>();
         private int X { get; set; }
+        private int Moved { get; set; }
 
         public GameMap(string name) {
             Name = name;
@@ -60,14 +61,23 @@ namespace YellGame {
             Obstacles.Add(obstacle);
         }
 
-        internal void MoveAll() {
+        internal void MoveAll(int length) {
             foreach (var obstacle in Obstacles) {
-                obstacle.Picture.Left -= 2;
+                obstacle.Picture.Left -= length;
             }
+
+            Moved += length;
         }
 
         public Obstacle GetLastObstacle() {
             return Obstacles[Obstacles.Count - 1];
+        }
+
+        public void Reset() {
+            foreach (var obstacle in Obstacles) {
+                obstacle.Picture.Left += Moved;
+            }
+            Moved = 0;
         }
 
     }

@@ -15,6 +15,7 @@ namespace YellGame {
         bool stop = false;
         int up = 0;
         int right = 0;
+        DateTime startTime;
 
         GameMap map;
         WaveInEvent waveIn;
@@ -23,6 +24,8 @@ namespace YellGame {
             InitializeComponent();
             this.map = map;
             Text = "YellGame | " + map.Name;
+            startTime = DateTime.Now;
+            player.Location = new Point(Width / 20, map.Obstacles[0].Top - 10);
         }
 
         private void timer_Tick(object sender, EventArgs e) {
@@ -37,7 +40,7 @@ namespace YellGame {
             }
 
             // Imposta il dispositivo di input selezionato
-            waveIn.DeviceNumber = Settings.Device;
+            waveIn.DeviceNumber = Data.Device;
 
             int horizontal = 0; // movimento orizzontale
             int vertical = 0; // movimento verticale
@@ -93,27 +96,23 @@ namespace YellGame {
 
             // Se il giocatore ha toccato l'ultimo ostacolo, allora ha vinto
             if (win) {
-                stop = true;
-                this.winLabel.Visible = true;
+                ExecuteWin();
                 return;
             }
 
             // Se si deve spostare la mappa a sinistra (super mario), il giocatore non si sposta
-            if (moveAll)
-                horizontal = 0;
-
             // Spostamento della posizione del giocatore
-            player.Left += horizontal;
+            player.Left += moveAll ? 0 : horizontal;
             player.Top += vertical;
 
             // Effetto super mario
             if (moveAll)
-                map.MoveAll();
+                map.MoveAll(Math.Abs(horizontal));
 
             // Se il giocatore è finito nel fosso o ha toccato un ostacolo deadly, ha perso
             if (player.Bottom >= 510 || dead) {
-                stop = true;
-                loseLabel.Visible = true;
+                ExecuteLose();
+                return;
             }
         }
 
@@ -139,11 +138,11 @@ namespace YellGame {
             }
 
             // calcolo del volume
-            maxValue += (int) (Settings.Sensibility / 100 * maxValue);
+            maxValue += (int) (Data.Sensibility / 100 * maxValue);
             float volume = (100 * peakValue) / maxValue;
 
-            up = (int) volume * 10 / 100; // determina il movimento verticale
-            right = (int) volume * 14 / 100; // determina il movimento orizzontale
+            up = (int) volume * 8 / 100; // determina il movimento verticale
+            right = (int) volume * 11 / 100; // determina il movimento orizzontale
         }
 
         private void settingsButton_Click(object sender, EventArgs e) {
@@ -152,8 +151,99 @@ namespace YellGame {
             Settings.OpenAndExecuteOnClose((s, e) => stop = false);
         }
 
-        private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
-            Application.Exit();
+        private void retryButton_Click(object sender, EventArgs e) {
+            // Faccio ricominciare il gioco
+            map.Reset();
+            new GameForm(map).Show();
+            Close();
         }
+
+        private void logoutButton_Click(object sender, EventArgs e) {
+            new MainMenu().Show();
+            Close();
+        }
+
+        private void StopAll() {
+            stop = true;
+            waveIn.StopRecording();
+            waveIn.Dispose();
+            timer.Enabled = false;
+        }
+
+        private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
+            StopAll();
+        }
+
+        private void ExecuteWin() {
+            stop = true;
+            CreateResultView("HAI VINTO!", Color.Green, true);
+        }
+
+        private void ExecuteLose() {
+            stop = true;
+            CreateResultView("HAI PERSO!", Color.Red);
+        }
+
+        private void CreateResultView(string text, Color color, bool showTime = false) {
+            Label result = new Label {
+                AutoSize = true,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font("Impact", 72F, FontStyle.Regular, GraphicsUnit.Point),
+                Size = new Size(585, 150),
+                ForeColor = color,
+                Name = "resultLabel",
+                TabIndex = 1,
+                Text = text,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            result.Location = new Point((Width - result.Width) / 2, Height / 2 - result.Height);
+
+            Button retry = new Button() {
+                BackgroundImage = Properties.Resources.playagain,
+                BackgroundImageLayout = ImageLayout.Stretch,
+                Name = "retryButton",
+                Size = new Size(45, 45),
+                TabIndex = 5,
+                UseVisualStyleBackColor = true
+            };
+            retry.Click += retryButton_Click;
+
+            retry.Location = new Point(Width / 2 - retry.Width - 30, Height / 2 + 15);
+            logoutButton.Location = new Point(Width / 2 + 30, Height / 2 + 15);
+
+            TimeSpan time = DateTime.Now - startTime;
+            string timeText = "";
+            if (time.TotalSeconds >= 60)
+                timeText = time.Minutes + " min ";
+            if (time.Seconds % 60 != 0)
+                timeText += (time.Seconds - 60 * time.Minutes) + " sec";
+
+            Label timings = new Label {
+                AutoSize = true,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font("Impact", 12F, FontStyle.Regular, GraphicsUnit.Point),
+                Size = new Size(10, 10),
+                ForeColor = Color.Black,
+                Name = "resultLabel",
+                TabIndex = 1,
+                Text = timeText,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            Controls.Add(result);
+            Controls.Add(retry);
+            Controls.Add(timings);
+
+            timings.Location = new Point((Width - timings.Width) / 2, Height / 2 - result.Height - timings.Height - 10);
+
+            result.BringToFront();
+            retry.BringToFront();
+            timings.BringToFront();
+            logoutButton.BringToFront();
+        }
+
     }
 }
