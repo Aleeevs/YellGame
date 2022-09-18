@@ -6,12 +6,13 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace YellGame {
     public class GameMap : IEquatable<GameMap> {
 
         public string Name { get; set; }
-        public TimeSpan TimeRecord { get; set; }
+        public TimeSpan TimeRecord { get; set; } = TimeSpan.FromSeconds(-1);
         public List<Obstacle> Obstacles { get; } = new List<Obstacle>();
         private int X { get; set; }
         private int Moved { get; set; }
@@ -21,7 +22,7 @@ namespace YellGame {
 
         public GameMap(string name, int startHeight) {
             Name = name;
-            AddObstacle(300, 100);
+            AddObstacle(300, startHeight);
         }
 
         public GameMap AddVoid(int width) {
@@ -47,7 +48,7 @@ namespace YellGame {
             Obstacle obstacle = CreateObstacle(left, top, width, height);
             obstacle.Deadly = true;
             obstacle.Picture.Image = up ? Properties.Resources.triangle : Properties.Resources.triangledown;
-            obstacle.Picture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            obstacle.Picture.SizeMode = PictureBoxSizeMode.StretchImage;
             Obstacles.Add(obstacle);
             return this;
         }
@@ -81,6 +82,7 @@ namespace YellGame {
 
         public void Reset() {
             foreach (var obstacle in Obstacles) {
+                obstacle.RefreshPicture();
                 obstacle.Picture.Left += Moved;
             }
             Moved = 0;

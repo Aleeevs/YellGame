@@ -15,6 +15,7 @@ namespace YellGame {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            Data.LoadFonts();
             Data.LoadMaps("..\\..\\..\\maps");
             Data.LoadTimeRecords();
             Application.Run(new MainMenu());

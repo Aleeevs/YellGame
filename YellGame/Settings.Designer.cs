@@ -94,6 +94,7 @@ namespace YellGame {
             this.Controls.Add(this.title);
             this.Controls.Add(this.micLabel);
             this.Controls.Add(this.cbDevice);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Settings";
             this.Text = "Settings";
             ((System.ComponentModel.ISupportInitialize)(this.sensibilityBar)).EndInit();

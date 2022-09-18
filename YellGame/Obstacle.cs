@@ -35,5 +35,19 @@ namespace YellGame {
         public int Width { get => Picture.Width; }
         public int Height { get => Picture.Height; }
 
+        public void RefreshPicture() {
+            Picture = new PictureBox() {
+                BackColor = Picture.BackColor,
+                Image = Picture.Image,
+                SizeMode = Picture.SizeMode,
+                Location = new Point(Left, Top),
+                Name = "obstacle" + Left + "-" + Top,
+                Size = new Size(Width, Height),
+                TabIndex = 1,
+                TabStop = false,
+                Tag = Picture.Tag
+            };
+        }
+
     }
 }

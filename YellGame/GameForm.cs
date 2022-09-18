@@ -27,7 +27,7 @@ namespace YellGame {
             this.map = map;
             Text = "YellGame | " + map.Name;
             startTime = DateTime.Now;
-            player.Location = new Point(Width / 20, map.Obstacles[0].Top - 10);
+            player.Location = new Point(25, map.Obstacles[0].Top - 10);
         }
 
         private void timer_Tick(object sender, EventArgs e) {
@@ -143,8 +143,8 @@ namespace YellGame {
             maxValue += (int) (Data.Sensibility / 100 * maxValue);
             float volume = (100 * peakValue) / maxValue;
 
-            up = (int) volume * 8 / 100; // determina il movimento verticale
-            right = (int) volume * 11 / 100; // determina il movimento orizzontale
+            up = (int) volume * 7 / 100; // determina il movimento verticale
+            right = (int) volume * 10 / 100; // determina il movimento orizzontale
         }
 
         private void settingsButton_Click(object sender, EventArgs e) {
@@ -155,13 +155,12 @@ namespace YellGame {
 
         private void retryButton_Click(object sender, EventArgs e) {
             // Faccio ricominciare il gioco
-            map.Reset();
-            new GameForm(map).Show();
             Close();
+            new GameForm(map).Show();
         }
 
         private void logoutButton_Click(object sender, EventArgs e) {
-            new MainMenu().Show();
+            MainMenu.Instance.Show();
             Close();
         }
 
@@ -170,6 +169,7 @@ namespace YellGame {
             waveIn.StopRecording();
             waveIn.Dispose();
             timer.Enabled = false;
+            map.Reset();
         }
 
         private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
@@ -226,10 +226,6 @@ namespace YellGame {
             Controls.Add(back);
             back.Location = new Point((Width - back.Width) / 2, (Height - back.Height) / 2);
 
-            Console.WriteLine(result.Width);
-            Console.WriteLine(back.Width + " " + back.Height);
-            Console.WriteLine(back.Location.X + " " + back.Location.Y);
-
             GraphicsPath gp = new GraphicsPath();
             Rectangle r = new Rectangle(new Point(0, 0), back.Size);
             int d = 75;
@@ -247,7 +243,7 @@ namespace YellGame {
             if (showTime) {
                 TimeSpan time = DateTime.Now - startTime;
                 string timeText = FormatTimeSpan(time); ;
-                if (time < map.TimeRecord) {
+                if (map.TimeRecord.TotalSeconds == -1 || time < map.TimeRecord) {
                     timeText += "\nNUOVO RECORD!";
                     map.TimeRecord = time;
                 } else {

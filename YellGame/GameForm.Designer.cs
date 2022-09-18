@@ -25,7 +25,6 @@ namespace YellGame {
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameForm));
             this.player = new System.Windows.Forms.PictureBox();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.volume = new System.Windows.Forms.Label();
@@ -36,11 +35,13 @@ namespace YellGame {
             // 
             // player
             // 
-            this.player.Image = ((System.Drawing.Image)(resources.GetObject("player.Image")));
-            this.player.Location = new System.Drawing.Point(439, 251);
+            this.player.BackColor = System.Drawing.Color.Transparent;
+            this.player.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.player.Image = global::YellGame.Properties.Resources.user1;
+            this.player.Location = new System.Drawing.Point(381, 205);
             this.player.Name = "player";
             this.player.Size = new System.Drawing.Size(48, 64);
-            this.player.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.player.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.player.TabIndex = 0;
             this.player.TabStop = false;
             // 
@@ -86,7 +87,7 @@ namespace YellGame {
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(832, 503);
             this.ControlBox = false;
             this.Controls.Add(this.logoutButton);

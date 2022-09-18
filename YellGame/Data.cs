@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,11 +15,17 @@ namespace YellGame {
     class Data {
 
         public static readonly string TimeRecordsPath = "..\\..\\..\\records.csv";
+        public static readonly string FontFolder = "..\\..\\..\\fonts\\";
+
+        public static readonly PrivateFontCollection CustomFonts = new PrivateFontCollection();
+        public static readonly List<GameMap> Maps = new List<GameMap>();
 
         public static double Sensibility;
         public static int Device;
 
-        public static HashSet<GameMap> maps = new HashSet<GameMap>();
+        public static void LoadFonts() {
+            CustomFonts.AddFontFile(FontFolder + "ethnocentric.otf");
+        }
 
         public static void LoadMaps(string path) {
             string[] files = Directory.GetFiles(path);
@@ -70,7 +77,7 @@ namespace YellGame {
                     continue;
                 }
 
-                maps.Add(map);
+                Maps.Add(map);
             }
          
         }
@@ -83,14 +90,15 @@ namespace YellGame {
                 string name = arr[0];
                 TimeSpan time = TimeSpan.FromSeconds(Convert.ToDouble(arr[1]));
 
-                if (maps.TryGetValue(new GameMap() { Name = name }, out GameMap map))
+                GameMap map = Maps.Find(map => map.Name == name);
+                if (map != null)
                     map.TimeRecord = time;
             }
         }
 
         public static void SaveTimeRecords() {
             using StreamWriter writer = new StreamWriter(TimeRecordsPath);
-            foreach (GameMap map in maps) {
+            foreach (GameMap map in Maps) {
                 writer.WriteLine(map.Name + "/" + map.TimeRecord.TotalSeconds);
             }
         }
